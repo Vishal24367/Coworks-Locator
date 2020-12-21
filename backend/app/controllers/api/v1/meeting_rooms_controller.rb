@@ -16,7 +16,35 @@ class Api::V1::MeetingRoomsController < ApplicationController
 
 
     def find_by_date_and_time
-        #logic implemented on board first
+        zone = ActiveSupport::TimeZone.new("Asia/Kolkata")
+        fromTime = Time.parse(params[:fromTime]) rescue nil
+        toTime = Time.parse(params[:toTime]) rescue nil
+        fromDate = Date.parse(params[:fromDate]) rescue nil
+        toDate = Date.parse(params[:toDate]) rescue nil
+        cowork = Cowork.find_by(uniqueKey: params[:uniqueKey])
+        if fromTime.present? && toTime.present? && toDate.present? && fromDate.present?
+            if cowork.present?
+                @result = TimeSlot.where('"from" >= ? and "to" <= ?', "%#{fromTime}%","%#{toTime}%" ).includes(:meeting_room, :available_date).where(time_slots: {isAvailable: true}, available_dates: {availability_date: fromDate..toDate}, meeting_rooms: {cowork_id: cowork.id})
+                zone = ActiveSupport::TimeZone.new("Asia/Kolkata")
+                response_data = []
+                @result.each do |data|
+                    result_object = {}
+                    result_object['meeting_room_id'] = data.meeting_room_id
+                    result_object['meeting_room_name'] = data.meeting_room.name
+                    result_object['available_date_id'] = data.available_date_id
+                    result_object['available_date'] = data.available_date.availability_date
+                    result_object['time_slot_id'] = data.id
+                    result_object['timing'] = data.from.strftime("%I:%M %p") + " to " + data.to.strftime("%I:%M %p")
+                    response_data << result_object
+                end
+                response_data = "No meeting rooms were available for the given search criteria." if response_data.count == 0
+                render json: {data: response_data}, status: :ok
+            else
+                render json: {message: "Invalid Cowork Unique Key. Kindly check again."}, status: 422
+            end
+        else
+            render json: {message: "Invalid Date/Time. Kindly check again."}, status: 422
+        end
     end
 
 end

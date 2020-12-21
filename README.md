@@ -45,24 +45,34 @@ Before start backend development has to install following:
         -   (a.) API-TYPE -> GET
         -   (b.) END-POINT -> localhost:3000/api/v1/coworks
         -   (c.) PARAMS-REQUIRED
-                *   (1.) latitude -> current user live latitude
-                *   (2.) longitude -> current user live longitude
-                *   (3.) radius -> radius to find coworks with min value 1
-                *   (4.) offset -> No. of coworks
+                -   (1.) latitude -> current user live latitude
+                -   (2.) longitude -> current user live longitude
+                -   (3.) radius -> radius to find coworks with min value 1
+                -   (4.) offset -> No. of coworks
 
-    +   To get available meeting rooms of a individual cowork with available date and time slot call this API.
+    +   To get available all the meeting rooms of a individual cowork call this API.
         -   (a.) API-TYPE -> GET
         -   (b.) END-POINT -> localhost:3000/api/v1/meeting_rooms
         -   (c.) PARAMS-REQUIRED
-                *   (1.) uniqueKey -> selected cowork uniqueKey.
+                -   (1.) uniqueKey -> selected cowork uniqueKey.
+
+    +   To get available meeting rooms of a individual cowork with for the particular given date and time range call this API.
+        -   (a.) API-TYPE -> GET
+        -   (b.) END-POINT -> localhost:3000/api/v1/meeting_rooms/find_by_date_and_time
+        -   (c.) PARAMS-REQUIRED
+                -   (1.) uniqueKey -> selected cowork uniqueKey.
+                -   (2.) fromDate -> fetch meeting rooms from this date
+                -   (3.) toDate -> fetch meeting rooms to this Date
+                -   (4.) fromTime -> fetch meeting rooms from this time.
+                -   (5.) toTime -> fetch meeting rooms to this time.
 
     +   To book a meeting room call this API.
         -   (a.) API-TYPE -> POST
         -   (b.) END-POINT -> localhost:3000/api/v1/time_slots/book_time_slot
         -   (c.) PARAMS-REQUIRED
-                *   (1.) meeting_room_id -> selected meeting room id.
-                *   (2.) available_date_id -> selected available date id.
-                *   (3.) time_slot_id -> selected time slot id.
+                -   (1.) meeting_room_id -> selected meeting room id.
+                -   (2.) available_date_id -> selected available date id.
+                -   (3.) time_slot_id -> selected time slot id.
     
         
 # Made By Vishal24367

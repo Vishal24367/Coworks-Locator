@@ -8,7 +8,6 @@ class Api::V1::TimeSlotsController < ApplicationController
             if available_date.present?
                 time_slot = TimeSlot.find_by(id: params[:time_slot_id], available_date_id: available_date.id) rescue false
                 if time_slot.present?
-                    byebug
                     time_slot.update!(isAvailable: false)
                     render json: {message: "Meeting Room is booked for the particular time slot.", time_slot_info: time_slot}, status: :ok
                 else
