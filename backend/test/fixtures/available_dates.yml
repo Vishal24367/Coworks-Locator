@@ -1,0 +1,7 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  availability_date: 2020-12-20
+
+two:
+  availability_date: 2020-12-20
