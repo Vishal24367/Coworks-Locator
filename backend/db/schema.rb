@@ -47,12 +47,15 @@ ActiveRecord::Schema.define(version: 2020_12_20_212940) do
     t.time "to"
     t.boolean "isAvailable"
     t.bigint "available_date_id"
+    t.bigint "meeting_room_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["available_date_id"], name: "index_time_slots_on_available_date_id"
+    t.index ["meeting_room_id"], name: "index_time_slots_on_meeting_room_id"
   end
 
   add_foreign_key "available_dates", "meeting_rooms"
   add_foreign_key "meeting_rooms", "coworks"
   add_foreign_key "time_slots", "available_dates"
+  add_foreign_key "time_slots", "meeting_rooms"
 end

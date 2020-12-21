@@ -6,6 +6,7 @@ class CreateTimeSlots < ActiveRecord::Migration[5.2]
       t.time :to
       t.boolean :isAvailable
       t.references :available_date, index: true, foreign_key: true
+      t.references :meeting_room, index: true, foreign_key: true
 
       t.timestamps
     end

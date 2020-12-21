@@ -68,7 +68,7 @@ all_availability_dates.each do |data|
             fromValue = toValue
             toValue = thirdValue
         end
-        TimeSlot.create!(name: "Slot-"+(i+1).to_s, isAvailable: true, from: fromValue, to: toValue, available_date_id: data.id)
+        TimeSlot.create!(name: "Slot-"+(i+1).to_s, isAvailable: true, from: fromValue, to: toValue, available_date_id: data.id, meeting_room_id: data.meeting_room_id)
         i = i + 1
     end
 end
