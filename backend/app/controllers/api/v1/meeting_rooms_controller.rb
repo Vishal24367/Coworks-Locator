@@ -14,4 +14,9 @@ class Api::V1::MeetingRoomsController < ApplicationController
         end
     end
 
+
+    def find_by_date_and_time
+        #logic implemented on board first
+    end
+
 end
