@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :coworks
-      resources :meeting_rooms
+      resources :meeting_rooms do 
+        collection do
+          get 'find_by_date_and_time'
+        end
+      end
       resources :time_slots do
         collection do
           post 'book_time_slot'
