@@ -3,7 +3,6 @@ import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Box, Button, Flex, Image, Heading, Stack, Text } from "@chakra-ui/react";
 import * as UrlConstant from '../../constant/constant';
-import Cowork from '../../pages/Cowork';
 import store from '../../constant/store';
 import * as actions from '../../constant/actionTypes';
 
@@ -15,10 +14,9 @@ const Hero = ({
   ctaText,
   ...rest
 }) => {
+
     const [loader, setLoader] = useState(false);
     const [coworkData, setCoworkData] = useState(null);
-    const [dataFetched, setDataFetched] = useState(false);
-
 
     const urlLauncher = async (url) => {
         try {
@@ -34,9 +32,6 @@ const Hero = ({
        }
     }
 
-
-
-
     const fetchingLatLong = (position) => {
         const { latitude, longitude } = position.coords;
         let url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=3bb95de2e5d94950b77e28c6dd4f227a`;
@@ -46,7 +41,7 @@ const Hero = ({
               let lat = res.results[0].geometry.lat;
               let lng = res.results[0].geometry.lng;
               let rad = 1;
-              let offset = 10;
+              let offset = 30;
               let params = `?latitude=${lat}&longitude=${lng}&radius=${rad}&offset=${offset}`
               urlLauncher(UrlConstant.NEARBYCOWROKS + params).then((e) => {
                 e.json().then((data) => {
@@ -61,7 +56,7 @@ const Hero = ({
                       }
                     });
                     window.history.pushState(data, '', "/coworks");
-                    window.location.href = "./coworks";
+                    window.location.href = "/coworks";
                   }
                 })
               })
@@ -148,13 +143,4 @@ Hero.propTypes = {
   image: PropTypes.string,
   ctaText: PropTypes.string,
   ctaLink: PropTypes.string
-};
-
-Hero.defaultProps = {
-  title: "React landing page with Chakra UI",
-  subtitle:
-    "This is the subheader section where you describe the basic benefits of your product",
-  image: "https://source.unsplash.com/collection/404339/800x600",
-  ctaText: "Create your account now",
-  ctaLink: "/search"
 };

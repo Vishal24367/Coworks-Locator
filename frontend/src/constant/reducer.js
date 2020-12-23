@@ -8,6 +8,13 @@ export default function reducer(state = { cowork: [] }, action) {
                     cowork: action.payload.data
                 }
             }
+        case actions.FETCH_MEETING_ROOM_DATA:
+            {
+                return {
+                    ...state,
+                    meeting_room: action.payload.data
+                }
+            }
         default:
             return state;
     }

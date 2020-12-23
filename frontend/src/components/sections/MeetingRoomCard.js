@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Box, Button, Flex, Image, Heading, Stack, Text, SimpleGrid, Badge } from "@chakra-ui/react";
 import * as UrlConstant from '../../constant/constant';
@@ -8,7 +8,7 @@ import store from '../../constant/store';
 import * as actions from '../../constant/actionTypes';
 
 
-const CoworkCard = ({cowork, dataCount, ...rest}) => {
+export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
 
     const [loader, setLoader] = useState(false);
 
@@ -32,7 +32,7 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
       beds: 3,
       baths: 2,
       title: "Coworks",
-      formattedPrice: "$1,900.00",
+      formattedPrice: "$100.00",
       reviewCount: 34,
       rating: 3.5,
     }
@@ -49,10 +49,8 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
                     data: data
                 }
               });
-              let meeting_room = store.getState()["meeting_room"];
-              console.log(meeting_room);
-              window.history.pushState(data, '', "/meeting_rooms");
-              window.location.href = "/meeting_rooms";
+              window.history.pushState(data, '', "/coworks");
+              window.location.href = "./coworks";
             }
           });
         })
@@ -60,13 +58,13 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
 
   return (
         <SimpleGrid minChildWidth="250px" maxW={{ xl: "1200px" }} style={{width: "-webkit-fill-available"}} spacing="25px">
-          {cowork.map((property) => {
+          {meetingRoom.map((property) => {
             return (
               <Box maxW="lg" borderWidth="1px" borderRadius="lg" overflow="hidden">
                 <Image 
                   src={tempProperty.imageUrl} 
                   alt={tempProperty.imageAlt + `${property.meeting_rooms_count} meeting rooms`} 
-                  onClick={(e)=>{fetchingMeetingRooms(property.uniqueKey)}}
+                  onClick={(e)=>{fetchingMeetingRooms(property.meeting_room_name)}}
                 />
                 <Box p="6">
                   <Box d="flex" alignItems="baseline">
@@ -92,15 +90,15 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
                     lineHeight="tight"
                     isTruncated
                   >
-                    {property.name}
+                    {property.meeting_room_name}
                   </Box>
 
-                  {/* <Box>
+                  <Box>
                     {tempProperty.formattedPrice}
                     <Box as="span" color="gray.600" fontSize="sm">
-                      / wk
+                      / day
                     </Box>
-                  </Box> */}
+                  </Box>
 
                   <Box d="flex" mt="2" alignItems="center">
                     {Array(5)
@@ -123,7 +121,7 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
                     bg="black" 
                     color="white" 
                     px={4} h={8} 
-                    onClick={(e)=>{fetchingMeetingRooms(property.uniqueKey)}}
+                    onClick={(e)=>{fetchingMeetingRooms(property.meeting_room_name)}}
                     >
                       Meeting Rooms
                     </Box>
@@ -136,8 +134,6 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
   );
 }
 
-export default withRouter(CoworkCard);
-
-CoworkCard.propTypes = {
+MeetingRoom.propTypes = {
 
 };
