@@ -4,7 +4,7 @@ import Hero from "../components/sections/Hero";
 import LandingLayout from "../components/layouts/LandingLayout";
 import { withRouter } from "react-router-dom";
 
-const Landing = ({props}) => {
+const Landing = ({ props }) => {
   return (
     <LandingLayout>
       <Hero
@@ -16,6 +16,6 @@ const Landing = ({props}) => {
       />
     </LandingLayout>
   );
-}
+};
 
 export default withRouter(Landing);

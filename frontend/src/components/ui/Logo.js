@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import Animall from './logoIcon.png';
+import Animall from "./logoIcon.png";
 
 export default function Logo(props) {
   return (

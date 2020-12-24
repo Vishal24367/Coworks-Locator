@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import Logo from "../ui/Logo";
-import * as UrlConstant from '../../constant/constant';
+import * as UrlConstant from "../../constant/constant";
 
 const MenuItem = ({ children, isLast, to = "/", ...rest }) => {
   return (
@@ -40,47 +40,49 @@ const MenuIcon = () => (
 );
 
 const Header = (props) => {
-
   const [show, setShow] = React.useState(false);
   const toggleMenu = () => setShow(!show);
   const [loader, setLoader] = useState(false);
 
   const urlLauncher = async (url) => {
     try {
-      const response = await fetch(UrlConstant.BASE_URL + url, 
-      {
-        method: 'GET',
+      const response = await fetch(UrlConstant.BASE_URL + url, {
+        method: "GET",
         headers: {
-        'Content-Type': 'application/json',
-      }});
+          "Content-Type": "application/json",
+        },
+      });
       return response;
     } catch (e) {
       console.log(e);
     }
-  }
-  
+  };
 
   const fetchingLatLong = (position) => {
     const { latitude, longitude } = position.coords;
     let url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=3bb95de2e5d94950b77e28c6dd4f227a`;
-    fetch(url).then(response => response.json()).then((res) => {
-        if(res.results[0].geometry !==  undefined && res.results[0].geometry !== null)
-        {
+    fetch(url)
+      .then((response) => response.json())
+      .then((res) => {
+        if (
+          res.results[0].geometry !== undefined &&
+          res.results[0].geometry !== null
+        ) {
           let lat = res.results[0].geometry.lat;
           let lng = res.results[0].geometry.lng;
           let rad = 1;
           let offset = 10;
-          let params = `?latitude=${lat}&longitude=${lng}&radius=${rad}&offset=${offset}`
+          let params = `?latitude=${lat}&longitude=${lng}&radius=${rad}&offset=${offset}`;
           urlLauncher(UrlConstant.NEARBYCOWROKS + params).then((e) => {
             e.json().then((data) => {
               setLoader(true);
-              window.history.pushState(data, '', "/coworks");
+              window.history.pushState(data, "", "/coworks");
               window.location.href = "./coworks";
-            })
-          })
-        }  
-    });
-  }
+            });
+          });
+        }
+      });
+  };
 
   return (
     <Flex
@@ -124,13 +126,23 @@ const Header = (props) => {
               color={["primary.500", "primary.500", "white", "white"]}
               bg={["white", "white", "primary.500", "primary.500"]}
               _hover={{
-                bg: ["primary.100", "primary.100", "primary.600", "primary.600"]
+                bg: [
+                  "primary.100",
+                  "primary.100",
+                  "primary.600",
+                  "primary.600",
+                ],
               }}
-              isLoading={loader} loadingText="खोजा जा रहा ह"
+              isLoading={loader}
+              loadingText="खोजा जा रहा ह"
               onClick={(e) => {
                 setLoader(true);
-                navigator.geolocation.getCurrentPosition(fetchingLatLong, console.log);
-            }}>
+                navigator.geolocation.getCurrentPosition(
+                  fetchingLatLong,
+                  console.log
+                );
+              }}
+            >
               कोवर्क खोजे
             </Button>
           </MenuItem>

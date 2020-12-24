@@ -4,13 +4,14 @@ import MeetingRoomCard from "../components/sections/MeetingRoomCard";
 import MeetingRoomLayout from "../components/layouts/MeetingRoomLayout";
 import store from "../constant/store";
 
-const MeetingRoom = ({data, ...rest}) => {
-
-  const initialValue = [{
-    meeting_room_address: "",
-    meeting_room_id: 0,
-    available_slots: [],
-  }];
+const MeetingRoom = ({ data }) => {
+  const initialValue = [
+    {
+      meeting_room_address: "",
+      meeting_room_id: 0,
+      available_slots: [],
+    },
+  ];
   const [meetingRoom, setMeetingRoom] = useState(initialValue);
   const [meetingRoomCount, setMeetingRoomCount] = useState(0);
 
@@ -22,11 +23,8 @@ const MeetingRoom = ({data, ...rest}) => {
 
   return (
     <MeetingRoomLayout>
-      <MeetingRoomCard
-        meetingRoom={meetingRoom}
-        dataCount={meetingRoomCount}
-      />
+      <MeetingRoomCard meetingRoom={meetingRoom} dataCount={meetingRoomCount} />
     </MeetingRoomLayout>
   );
-}
+};
 export default MeetingRoom;
