@@ -55,7 +55,6 @@ const Hero = ({
                           data: data
                       }
                     });
-                    window.history.pushState(data, '', "/coworks");
                     window.location.href = "/coworks";
                   }
                 })

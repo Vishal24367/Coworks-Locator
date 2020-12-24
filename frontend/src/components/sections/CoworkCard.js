@@ -34,7 +34,11 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
       title: "Coworks",
       formattedPrice: "$1,900.00",
       reviewCount: 34,
-      rating: 3.5,
+      rating: 3
+    }
+
+    let getRandomNumber = () => {
+      Math.floor((Math.random() * 10) + 1);
     }
 
     const fetchingMeetingRooms = (coworkUniqueKey) => {
@@ -42,16 +46,13 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
         urlLauncher(UrlConstant.ALLMEETINGROOMS + params).then((e) => {
           e.json().then((data) => {
             setLoader(false);
-            if(data.length > 0){
+            if(data.data.length > 0){
               store.dispatch({
                 type: actions.FETCH_MEETING_ROOM_DATA,
                 payload: {
-                    data: data
+                    data: data.data
                 }
               });
-              let meeting_room = store.getState()["meeting_room"];
-              console.log(meeting_room);
-              window.history.pushState(data, '', "/meeting_rooms");
               window.location.href = "/meeting_rooms";
             }
           });
@@ -95,21 +96,30 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
                     {property.name}
                   </Box>
 
-                  {/* <Box>
+                  <Box>
                     {tempProperty.formattedPrice}
                     <Box as="span" color="gray.600" fontSize="sm">
                       / wk
                     </Box>
-                  </Box> */}
+                  </Box>
+
+                  <Box d="flex" mt="2" alignItems="center">
+                    <Box mt="1" fontWeight="semibold" as="h4">
+                      Address :-
+                    </Box>
+                    <Box as="h3" ml="2" mt="1" color="gray.600" fontSize="md">
+                      {property.address}
+                    </Box>
+                  </Box>
 
                   <Box d="flex" mt="2" alignItems="center">
                     {Array(5)
                       .fill("")
                       .map((_, i) => (
-                        <StarIcon
-                          key={i}
-                          color={i < tempProperty.rating ? "teal.500" : "gray.300"}
-                        />
+                          <StarIcon
+                            key={i}
+                            color={i < tempProperty.rating ? "teal.500" : "gray.300"}
+                          />
                       ))}
                     <Box as="span" ml="2" color="gray.600" fontSize="sm">
                       {tempProperty.reviewCount} reviews

@@ -47,7 +47,7 @@ class Api::V1::MeetingRoomsController < ApplicationController
                 time_object = {}
                 if response_data.find{|rdata| rdata[:meeting_room_id] == data.meeting_room_id}.present?
                     if response_available_date.find{|rdata| rdata[:availability_date_id] == data.available_date_id}.present?
-                        if response_available_time.find{|rtime| rtime[:availability_time_id] != data.id}.present?
+                        if response_available_time.find{|rtime| rtime[:time_slot_id] != data.id}.present?
                             time_object[:time_slot_id] = data.id
                             time_object[:timing] = data.from.strftime("%I:%M %p") + " to " + data.to.strftime("%I:%M %p")
                             response_available_time << time_object
@@ -55,7 +55,7 @@ class Api::V1::MeetingRoomsController < ApplicationController
                             response_available_time = Array.new
                         end
                     else
-                        time_object[:availability_time_id] = data.id
+                        time_object[:time_slot_id] = data.id
                         time_object[:timing] = data.from.strftime("%I:%M %p") + " to " + data.to.strftime("%I:%M %p")
                         response_available_time = Array.new
                         response_available_time << time_object
@@ -71,7 +71,7 @@ class Api::V1::MeetingRoomsController < ApplicationController
                     result_object[:meeting_room_address] = data.meeting_room.cowork.address
                     result_object[:cowork_unique_key] = data.meeting_room.cowork.uniqueKey
                     result_object[:allocated_times] = Array.new
-                    time_object[:availability_time_id] = data.id
+                    time_object[:time_slot_id] = data.id
                     time_object[:timing] = data.from.strftime("%I:%M %p") + " to " + data.to.strftime("%I:%M %p")
                     response_available_time = Array.new
                     response_available_date = Array.new
