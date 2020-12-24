@@ -17,7 +17,6 @@ const MeetingRoom = ({data, ...rest}) => {
   useEffect(() => {
     let meeting_room = store.getState()["meeting_room"];
     setMeetingRoom(meeting_room);
-    console.log(meeting_room);
     setMeetingRoomCount(meeting_room.length);
   }, []);
 

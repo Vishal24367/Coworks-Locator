@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Image, SimpleGrid, Badge, Modal,
   ModalOverlay,
   ModalContent,
@@ -9,42 +9,98 @@ import { Box, Image, SimpleGrid, Badge, Modal,
   Select,
   ModalCloseButton, 
   useDisclosure,
+  useToast,
   Stack} from "@chakra-ui/react";
-// import * as UrlConstant from '../../constant/constant';
+import store from '../../constant/store';
+import * as UrlConstant from '../../constant/constant';
+import { withRouter } from "react-router-dom";
 
 
-export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
+const MeetingRoomCard = ({meetingRoom, dataCount}) => {
 
-  const initialValue = {allocated_times: []};
-  // const [loader, setLoader] = useState(false);
+  const initialValue = {
+    meeting_room_id: "",
+    allocated_times: []
+  };
+
+  const [loader, setLoader] = useState(false);
   const [selectedMeetingRoom, setSelectedMeetingRoom] = useState(initialValue);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectValue, setSelectValue] = React.useState("");
   const [selectDateValue, setSelectDateValue] = React.useState("");
+  const [loadModal, setLoadModal] = useState(false);
+  const toast = useToast();
 
-  // const urlLauncher = async (url) => {
-  //     try {
-  //     const response = await fetch(UrlConstant.BOOKMEETINGROOM + url, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       }
-  //     });
-  //     return response;
-  //   } catch (e) {
-  //     console.log(e);
-  //     }
-  // }
+  useEffect(() => {
+    let allMeetingRoom = store.getState()["meeting_room"];
+    if(allMeetingRoom.length > 0 && allMeetingRoom[0].meeting_room_id > 0){
+      debugger
+      setLoadModal(true);
+    }
+    else{
+      window.location.href = "/";
+    }
+  }, []);
+
+  const urlLauncher = async (url) => {
+    let data = {
+      time_slot_id: parseInt(selectValue),
+      available_date_id: parseInt(selectDateValue),
+      meeting_room_id: parseInt(selectedMeetingRoom.meeting_room_id)
+    }
+    try {
+      const response = await fetch(UrlConstant.BASE_URL + url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      }
+  }
 
   const showAvailableDatesAndTimeSlots = (currentMeetingRoom) => {
     setSelectedMeetingRoom(currentMeetingRoom);
-    onOpen()
+    onOpen();
   }
 
   const handleChange = (e, selectedDateId) => {
     setSelectValue(e.target.value);
     setSelectDateValue(selectedDateId);
-    console.log(selectValue, selectDateValue);
+  }
+
+  const bookMeetingRoom = (e) => {
+    setLoader(true);
+    urlLauncher(UrlConstant.BOOKMEETINGROOM).then((e) => {
+      e.json().then((res) => {
+        setLoader(false);
+        let status = parseInt(res.internal_status);
+        if(status === 40){
+          toast({
+            title: res.message,
+            status: "success",
+            duration: 4000,
+            isClosable: true,
+            });
+          setTimeout(function(){onClose()}, 500);
+          setSelectValue("");
+          setSelectDateValue("");
+        }
+        else{
+          toast({
+            title: res.message,
+            status: "error",
+            duration: 4000,
+            isClosable: true,
+            });
+          setSelectValue("");
+          setSelectDateValue("");
+        }
+      });
+    })
   }
 
   const tempProperty = {
@@ -58,9 +114,12 @@ export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
     rating: 3.5,
   }
 
-  return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered motionPreset="slideInBottom" scrollBehavior="inside" size="xs">
+  return (loadModal === true ? <>
+    <Modal isOpen={isOpen} onClose={(e) => {
+        onClose();
+        setSelectValue("");
+        setSelectDateValue("");
+      }} isCentered motionPreset="slideInBottom" scrollBehavior="inside" size="sm">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Available Dates</ModalHeader>
@@ -69,12 +128,12 @@ export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
               <Stack spacing={5}>
                 {selectedMeetingRoom.allocated_times.map((date) => {
                   return (
-                    <Select placeholder={date.available_date} disabled={selectValue !== "" && date.availability_date_id !== selectDateValue ? true : false} value={selectValue} onChange={(e) => {
+                    <Select key={date.availability_date_id} placeholder={date.available_date} disabled={selectValue !== "" && date.availability_date_id !== selectDateValue ? true : false} value={selectValue} onChange={(e) => {
                       handleChange(e, date.availability_date_id)
                     }}>
                       {date.time_slots.map((time_slot) => {
                         return (
-                          <option value={time_slot.time_slot_id}>{time_slot.timing}</option>
+                          <option key={time_slot.time_slot_id} value={time_slot.time_slot_id}>{time_slot.timing}</option>
                         );
                       })} 
                     </Select>
@@ -84,10 +143,14 @@ export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={(e) => {
+                onClose();
+                setSelectValue("");
+                setSelectDateValue("");
+              }}>
               Close
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
+            <Button colorScheme="primary" isLoading={loader} loadingText="Booking" onClick={bookMeetingRoom}>Book</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -113,7 +176,7 @@ export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
                     textTransform="uppercase"
                     ml="2"
                   >
-                    {property.length} meeting rooms
+                    {property.allocated_times.length} Available Dates
                   </Box>
                 </Box>
 
@@ -144,9 +207,7 @@ export default function MeetingRoom({meetingRoom, dataCount, ...rest}) {
           );
         })}
       </SimpleGrid>
-    </>);
+  </> : null);
 }
 
-MeetingRoom.propTypes = {
-
-};
+export default withRouter(MeetingRoomCard);

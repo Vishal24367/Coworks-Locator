@@ -10,18 +10,18 @@ class Api::V1::TimeSlotsController < ApplicationController
                 if time_slot.present?
                     if time_slot.isAvailable == true
                         time_slot.update!(isAvailable: false)
-                        render json: {message: "Meeting Room is booked for the particular time slot.", time_slot_info: time_slot}, status: :ok
+                        render json: {message: "Meeting Room is booked for the particular time slot.", time_slot_info: time_slot, internal_status: 40}, status: :ok
                     else
-                        render json: {message: "Meeting Room is already booked for the particular time slot."}, status: 422
+                        render json: {message: "Meeting Room is already booked for the particular time slot.", internal_status: 41}, status: 422
                     end
                 else
-                    render json: {message: "Invalid Time Slot Id."}, status: 422
+                    render json: {message: "Invalid Time Slot Id.", internal_status: 41}, status: 422
                 end
             else
-                render json: {message: "Invalid Available Date Id."}, status: 422
+                render json: {message: "Invalid Available Date Id.", internal_status: 41}, status: 422
             end
         else
-            render json: {message: "Invalid Meeting Room Id."}, status: 422
+            render json: {message: "Invalid Meeting Room Id.", internal_status: 41}, status: 422
         end
     end
 
