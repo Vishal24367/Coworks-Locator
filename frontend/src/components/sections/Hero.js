@@ -1,10 +1,50 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Box, Button, Flex, Image, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, 
+  Image, Heading, 
+  Stack, Text,
+  Popover, ButtonGroup,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  useDisclosure,
+  FormControl, FormLabel,
+  Input
+} from "@chakra-ui/react";
 import * as UrlConstant from '../../constant/constant';
 import store from '../../constant/store';
 import * as actions from '../../constant/actionTypes';
+
+
+
+const TextInput = React.forwardRef((props, ref) => {
+  return (
+    <FormControl>
+      <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
+      <Input type="number" ref={ref} id={props.id} {...props} />
+    </FormControl>
+  )
+})
+
+const Form = ({ firstFieldRef }) => {
+  return (
+    <Stack spacing={4}>
+      <TextInput
+        label="दूरी (in किलोमीटर)"
+        id="radius"
+        ref={firstFieldRef}
+        defaultValue={1}
+        type="number"
+      />
+      <TextInput label="ओफ़्सेट" id="offset" defaultValue={1} />
+    </Stack>
+  )
+}
 
 const Hero = ({
   title,
@@ -16,7 +56,8 @@ const Hero = ({
 }) => {
 
     const [loader, setLoader] = useState(false);
-    const [coworkData, setCoworkData] = useState(null);
+    const firstFieldRef = useRef(null)
+    const { onOpen, onClose, isOpen } = useDisclosure()
 
     const urlLauncher = async (url) => {
         try {
@@ -40,14 +81,12 @@ const Hero = ({
             {
               let lat = res.results[0].geometry.lat;
               let lng = res.results[0].geometry.lng;
-              let rad = 1;
-              let offset = 30;
-              let params = `?latitude=${lat}&longitude=${lng}&radius=${rad}&offset=${offset}`
+              let offset = parseInt(document.getElementById("offset").value);
+              let radius = parseInt(document.getElementById("radius").value);
+              let params = `?latitude=${lat}&longitude=${lng}&radius=${radius}&offset=${offset}`
               urlLauncher(UrlConstant.NEARBYCOWROKS + params).then((e) => {
                 e.json().then((data) => {
                   setLoader(false);
-                  setCoworkData(data);
-                  console.log("Setting cowork data",coworkData);
                   if(data !== undefined && data !== null && data.length > 0){
                     store.dispatch({
                       type: actions.FETCH_COWORK_DATA,
@@ -101,20 +140,58 @@ const Hero = ({
           {subtitle}
         </Heading>
         <Link to={ctaLink}>
-          <Button
-            colorScheme="primary"
-            borderRadius="8px"
-            py="4"
-            px="4"
-            lineHeight="1"
-            size="md"
-            isLoading={loader} loadingText="खोजा जा रहा ह"
-            onClick={(e) => {
-                setLoader(true);
-                navigator.geolocation.getCurrentPosition(fetchingLatLong, console.log);
-            }}>
-            {ctaText}
-          </Button>
+          <Popover
+            initialFocusRef={firstFieldRef}
+            placement="bottom"
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            closeOnBlur={false}
+          >
+            <PopoverTrigger>
+              <Button
+              colorScheme="primary"
+              borderRadius="8px"
+              py="4"
+              px="4"
+              lineHeight="1"
+              size="md"
+              >
+                {ctaText}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent color="white" bg="blue.800" borderColor="blue.800">
+              <PopoverHeader pt={4} fontWeight="bold" border="0">
+                करीबी कोवर्क ढूंढे
+              </PopoverHeader>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverBody>
+                <Form firstFieldRef={firstFieldRef} />
+              </PopoverBody>
+              <PopoverFooter
+                border="0"
+                d="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                pb={4}
+              >
+                <Box fontSize="sm">© Vishal76342 </Box>
+                <ButtonGroup size="sm">
+                  <Button colorScheme="blue" onClick={onClose} ref={firstFieldRef}>
+                    रद्द करें
+                  </Button>
+                  <Button colorScheme="green" isLoading={loader} loadingText="खोजा जा रहा ह"
+                  onClick={(e) => {
+                    setLoader(true);
+                    navigator.geolocation.getCurrentPosition(fetchingLatLong, console.log);
+                  }}>
+                    ढूंढे
+                  </Button>
+                </ButtonGroup>
+              </PopoverFooter>
+            </PopoverContent>
+          </Popover>
         </Link>
         <Text
           fontSize="xs"
