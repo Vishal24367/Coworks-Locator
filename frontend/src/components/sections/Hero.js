@@ -73,33 +73,23 @@ const Hero = ({
        }
     }
 
-    const fetchingLatLong = (position) => {
-        const { latitude, longitude } = position.coords;
-        let url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=3bb95de2e5d94950b77e28c6dd4f227a`;
-        fetch(url).then(response => response.json()).then((res) => {
-            if(res.results[0].geometry !==  undefined && res.results[0].geometry !== null)
-            {
-              let lat = res.results[0].geometry.lat;
-              let lng = res.results[0].geometry.lng;
-              let offset = parseInt(document.getElementById("offset").value);
-              let radius = parseInt(document.getElementById("radius").value);
-              let params = `?latitude=${lat}&longitude=${lng}&radius=${radius}&offset=${offset}`
-              urlLauncher(UrlConstant.NEARBYCOWROKS + params).then((e) => {
-                e.json().then((data) => {
-                  setLoader(false);
-                  if(data !== undefined && data !== null && data.length > 0){
-                    store.dispatch({
-                      type: actions.FETCH_COWORK_DATA,
-                      payload: {
-                          data: data
-                      }
-                    });
-                    window.location.href = "/coworks";
-                  }
-                })
-              })
+    const fetchingLatLong = (e) => {
+        let offset = parseInt(document.getElementById("offset").value);
+        let radius = parseInt(document.getElementById("radius").value);
+        let params = `?latitude=${28.5309835}&longitude=${77.3846918}&radius=${radius}&offset=${offset}`
+        urlLauncher(UrlConstant.NEARBYCOWROKS + params).then((e) => {
+          e.json().then((data) => {
+            setLoader(false);
+            if(data !== undefined && data !== null && data.length > 0){
+              store.dispatch({
+                type: actions.FETCH_COWORK_DATA,
+                payload: {
+                    data: data
+                }
+              });
+              window.location.href = "/coworks";
             }
-            
+          })
         });
     }
 
@@ -181,11 +171,7 @@ const Hero = ({
                   <Button colorScheme="blue" onClick={onClose} ref={firstFieldRef}>
                     रद्द करें
                   </Button>
-                  <Button colorScheme="green" isLoading={loader} loadingText="खोजा जा रहा ह"
-                  onClick={(e) => {
-                    setLoader(true);
-                    navigator.geolocation.getCurrentPosition(fetchingLatLong, console.log);
-                  }}>
+                  <Button colorScheme="green" isLoading={loader} loadingText="खोजा जा रहा ह" onClick={fetchingLatLong}>
                     ढूंढे
                   </Button>
                 </ButtonGroup>

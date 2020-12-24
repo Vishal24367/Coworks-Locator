@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import { Box, Image, SimpleGrid, Badge } from "@chakra-ui/react";
+import { Box, CircularProgress, SimpleGrid, Badge } from "@chakra-ui/react";
 import * as UrlConstant from '../../constant/constant';
 import { StarIcon } from '@chakra-ui/icons'
 import store from '../../constant/store';
 import * as actions from '../../constant/actionTypes';
+import SuspenseImage from './SuspenseImage.tsx';
 
 
 const CoworkCard = ({cowork, dataCount, ...rest}) => {
 
-    const [loaderValue, setLoaderValue] = useState(false);
     const [loadCards, setLoadCards] = useState(false);
 
     useEffect(() => {
@@ -51,7 +51,6 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
         let params = `?uniqueKey=${coworkUniqueKey}`
         urlLauncher(UrlConstant.ALLMEETINGROOMS + params).then((e) => {
           e.json().then((data) => {
-            setLoaderValue(false);
             if(data.data.length > 0){
               store.dispatch({
                 type: actions.FETCH_MEETING_ROOM_DATA,
@@ -66,15 +65,12 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
     }
 
   return ( loadCards === true ? <>
+  <React.Suspense fallback={<><CircularProgress mt={200} isIndeterminate size="150px" color="green.300"  thickness="2px"/></>}>
     <SimpleGrid minChildWidth="250px" maxW={{ xl: "1200px" }} style={{width: "-webkit-fill-available"}} spacing="25px">
       {cowork.map((property) => {
         return (
-          <Box maxW="lg" key={property.id} borderWidth="1px" borderRadius="lg" overflow="hidden">
-            <Image 
-              src={tempProperty.imageUrl} 
-              alt={tempProperty.imageAlt + `${property.meeting_rooms_count} meeting rooms`} 
-              onClick={(e)=>{fetchingMeetingRooms(property.uniqueKey)}}
-            />
+            <Box maxW="lg" key={property.id} borderWidth="1px" borderRadius="lg" overflow="hidden">
+            <SuspenseImage src={tempProperty.imageUrl}/>
             <Box p="6">
               <Box d="flex" alignItems="baseline">
                 <Badge borderRadius="full" px="2" colorScheme="teal">
@@ -105,7 +101,7 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
               <Box>
                 {tempProperty.formattedPrice}
                 <Box as="span" color="gray.600" fontSize="sm">
-                  / wk
+                  / day
                 </Box>
               </Box>
 
@@ -149,7 +145,12 @@ const CoworkCard = ({cowork, dataCount, ...rest}) => {
         );
       })}
     </SimpleGrid>
-  </> : null);
+    </React.Suspense>
+  </> : 
+  <React.Suspense fallback={<>
+    <CircularProgress value={59} size="100px" thickness="4px" />
+  </>}></React.Suspense>
+  );
 }
 
 export default withRouter(CoworkCard);

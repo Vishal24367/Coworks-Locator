@@ -10,10 +10,12 @@ import { Box, Image, SimpleGrid, Badge, Modal,
   ModalCloseButton, 
   useDisclosure,
   useToast,
+  CircularProgress, CircularProgressLabel,
   Stack} from "@chakra-ui/react";
 import store from '../../constant/store';
 import * as UrlConstant from '../../constant/constant';
 import { withRouter } from "react-router-dom";
+import SuspenseImage from './SuspenseImage.tsx';
 
 
 const MeetingRoomCard = ({meetingRoom, dataCount}) => {
@@ -115,6 +117,7 @@ const MeetingRoomCard = ({meetingRoom, dataCount}) => {
   }
 
   return (loadModal === true ? <>
+  <React.Suspense fallback={<><CircularProgress mt={200} isIndeterminate size="150px" color="green.300"  thickness="2px"/></>}>
     <Modal isOpen={isOpen} onClose={(e) => {
         onClose();
         setSelectValue("");
@@ -158,11 +161,7 @@ const MeetingRoomCard = ({meetingRoom, dataCount}) => {
         {meetingRoom.map((property) => {
           return (
             <Box maxW="lg" borderWidth="1px" borderRadius="lg" overflow="hidden">
-              <Image 
-                src={tempProperty.imageUrl} 
-                alt={tempProperty.imageAlt + `${property.meeting_room_name} meeting rooms`} 
-                onClick={(e)=>{}}
-              />
+              <SuspenseImage src={tempProperty.imageUrl}/>
               <Box p="6">
                 <Box d="flex" alignItems="baseline">
                   <Badge borderRadius="full" px="2" colorScheme="teal">
@@ -207,6 +206,7 @@ const MeetingRoomCard = ({meetingRoom, dataCount}) => {
           );
         })}
       </SimpleGrid>
+    </React.Suspense>
   </> : null);
 }
 
