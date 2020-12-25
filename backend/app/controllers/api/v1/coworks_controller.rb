@@ -1,4 +1,4 @@
-class CoworksController < ApplicationController
+class Api::V1::CoworksController < ApplicationController
 
     def index
         if params[:latitude] != nil && params[:longitude] != nil

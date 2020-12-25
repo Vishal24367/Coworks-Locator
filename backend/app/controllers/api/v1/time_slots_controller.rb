@@ -1,4 +1,4 @@
-class TimeSlotsController < ApplicationController
+class Api::V1::TimeSlotsController < ApplicationController
     before_action :authenticate_user!, except: [:book_time_slot]
 
     def book_time_slot
