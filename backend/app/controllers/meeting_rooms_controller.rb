@@ -1,4 +1,4 @@
-class Api::V1::MeetingRoomsController < ApplicationController
+class MeetingRoomsController < ApplicationController
 
     def index
         cowork = Cowork.find_by(uniqueKey: params[:uniqueKey]) rescue false
