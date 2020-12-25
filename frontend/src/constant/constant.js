@@ -1,4 +1,4 @@
-export const BASE_URL = "http://13.233.138.254:3000/";
+export const BASE_URL = "http://13.233.138.254:3000/api/v1";
 export const NEARBYCOWROKS = "coworks";
 export const ALLMEETINGROOMS = "meeting_rooms";
 export const PARTICULARMEETINGROOMS =
